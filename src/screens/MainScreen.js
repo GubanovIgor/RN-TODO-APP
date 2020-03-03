@@ -15,7 +15,6 @@ export const MainScreen = ({ addTodo, removeTodo, todos, openTodo }) => {
   );
 
   if (todos.length === 0) {
-    console.log('hui')
     content = (
       <View style={styles.imageWrap}>
         <Image
