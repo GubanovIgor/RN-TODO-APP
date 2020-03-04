@@ -65,7 +65,10 @@ export const TodoState = ({ children }) => {
   const updateTodo = async (id, title) => {
     clearError();
     try {
-      await Http.patch(`https://rn-todo-app-4e853.firebaseio.com/todos/${id}.json`, { title })
+      await Http.patch(
+        `https://rn-todo-app-4e853.firebaseio.com/todos/${id}.json`,
+        { title }
+      );
       dispatch({ type: UPDATE_TODO, id, title });
     } catch (e) {}
   };
@@ -74,13 +77,17 @@ export const TodoState = ({ children }) => {
     clearError();
     showLoader();
     try {
+      let todos = [];
       const data = await Http.get(
         "https://rn-todo-app-4e853.firebaseio.com/todos.json"
       );
-      const todos = Object.keys(data).map(key => ({ ...data[key], id: key }));
+      if (data) {
+        todos = Object.keys(data).map(key => ({ ...data[key], id: key }));
+      }
       dispatch({ type: FETCH_TODO, todos });
     } catch (error) {
-      showError("Something went wrong");
+      showError("fetchTodos went wrong");
+      console.log(error)
     } finally {
       hideLoader();
     }
