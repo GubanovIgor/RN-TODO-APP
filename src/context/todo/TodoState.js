@@ -60,9 +60,22 @@ export const TodoState = ({ children }) => {
     );
   };
 
-  const updateTodo = (id, title) => dispatch({ type: UPDATE_TODO, id, title });
+  const updateTodo = async (id, title) => {
+    clearError()
+    try {
+      await fetch(`https://rn-todo-app-4e853.firebaseio.com/todos/${id}.json`, {
+        method: "PATCH",
+        header: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ title })
+      });
+      dispatch({ type: UPDATE_TODO, id, title });
+    } catch (e) {}
+  };
 
   const fetchTodos = async () => {
+    clearError()
     showLoader();
     try {
       const response = await fetch(
@@ -78,7 +91,7 @@ export const TodoState = ({ children }) => {
       dispatch({ type: FETCH_TODO, todos });
     } catch (error) {
       showError("Something went wrong");
-      console.log('ERROR', error);
+      console.log("ERROR", error);
     } finally {
       hideLoader();
     }
@@ -88,7 +101,9 @@ export const TodoState = ({ children }) => {
 
   const hideLoader = () => dispatch({ type: HIDE_LOADER });
 
-  const showError = error => dispatch({ type: SHOW_ERROR, error })
+  const showError = error => dispatch({ type: SHOW_ERROR, error });
+
+  const clearError = () => dispatch({ type: CLEAR_ERROR })
 
   return (
     <TodoContext.Provider
