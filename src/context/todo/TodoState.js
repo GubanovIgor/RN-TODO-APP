@@ -10,14 +10,17 @@ import {
   UPDATE_TODO,
   FETCH_TODO,
   SHOW_LOADER,
-  HIDE_LOADER
+  HIDE_LOADER,
+  SHOW_ERROR,
+  CLEAR_ERROR
 } from "../types";
 
 export const TodoState = ({ children }) => {
   const { setTodoId } = useContext(ScreenContext);
   const initialState = {
     todos: [],
-    loader: false
+    loader: false,
+    error: null
   };
   const [state, dispatch] = useReducer(todoReducer, initialState);
 
@@ -35,6 +38,7 @@ export const TodoState = ({ children }) => {
     const data = await response.json();
     dispatch({ type: ADD_TODO, title, id: data.name });
   };
+
   const removeTodo = id => {
     Alert.alert(
       "Удаление элемента",
@@ -55,24 +59,36 @@ export const TodoState = ({ children }) => {
       { cancelable: true }
     );
   };
+
   const updateTodo = (id, title) => dispatch({ type: UPDATE_TODO, id, title });
+
   const fetchTodos = async () => {
-    showLoader()
-    const response = await fetch(
-      "https://rn-todo-app-4e853.firebaseio.com/todos.json",
-      {
-        headers: {
-          "Content-Type": "application/json"
+    showLoader();
+    try {
+      const response = await fetch(
+        "https://rn-todo-app-4e853.firebaseio.com/todos.json",
+        {
+          headers: {
+            "Content-Type": "application/json"
+          }
         }
-      }
-    );
-    const data = await response.json();
-    const todos = Object.keys(data).map(key => ({ ...data[key], id: key }));
-    dispatch({ type: FETCH_TODO, todos });
-    hideLoader()
+      );
+      const data = await response.json();
+      const todos = Object.keys(data).map(key => ({ ...data[key], id: key }));
+      dispatch({ type: FETCH_TODO, todos });
+    } catch (error) {
+      showError("Something went wrong");
+      console.log('ERROR', error);
+    } finally {
+      hideLoader();
+    }
   };
+
   const showLoader = () => dispatch({ type: SHOW_LOADER });
+
   const hideLoader = () => dispatch({ type: HIDE_LOADER });
+
+  const showError = error => dispatch({ type: SHOW_ERROR, error })
 
   return (
     <TodoContext.Provider
@@ -84,7 +100,8 @@ export const TodoState = ({ children }) => {
         fetchTodos,
         showLoader,
         hideLoader,
-        loader: state.loader
+        loader: state.loader,
+        error: state.error
       }}
     >
       {children}

@@ -5,16 +5,19 @@ import { Todo } from "../components/Todo";
 import { TodoContext } from "../context/todo/todoContext";
 import { ScreenContext } from "../context/screen/screenContext";
 import { AppLoader } from "../components/ui/AppLoader";
+import { AppError } from "../components/ui/AppError";
 
 export const MainScreen = () => {
-  const { addTodo, removeTodo, todos, fetchTodos, loader } = useContext(TodoContext);
+  const { addTodo, removeTodo, todos, fetchTodos, loader, error } = useContext(
+    TodoContext
+  );
   const { setTodoId } = useContext(ScreenContext);
 
-  const loadTodos = useCallback(async () => await fetchTodos(), [fetchTodos])
+  const loadTodos = useCallback(async () => await fetchTodos(), [fetchTodos]);
 
   useEffect(() => {
-    loadTodos()
-  }, [])
+    loadTodos();
+  }, []);
 
   let content = (
     <FlatList
@@ -41,9 +44,11 @@ export const MainScreen = () => {
   }
 
   if (loader) {
-    return (
-      <AppLoader/>
-    )
+    return <AppLoader />;
+  }
+
+  if (error) {
+    return <AppError onPress={loadTodos} error={error}/>;
   }
 
   return (
