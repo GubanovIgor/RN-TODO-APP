@@ -34,7 +34,8 @@ export const TodoState = ({ children }) => {
       );
       dispatch({ type: ADD_TODO, title, id: data.name });
     } catch (e) {
-      showError("Something went wrong");
+      showError("addTodo went wrong");
+      console.log(e)
     }
   };
 
@@ -70,7 +71,10 @@ export const TodoState = ({ children }) => {
         { title }
       );
       dispatch({ type: UPDATE_TODO, id, title });
-    } catch (e) {}
+    } catch (e) {
+      showError("updateTodo went wrong");
+      console.log(error)
+    }
   };
 
   const fetchTodos = async () => {
