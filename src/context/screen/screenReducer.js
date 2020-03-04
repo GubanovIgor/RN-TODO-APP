@@ -1,4 +1,4 @@
-import { SET_TODO_ID } from "../actions";
+import { SET_TODO_ID } from "../types";
 
 const handlers = {
   [SET_TODO_ID]: (state, todoId) => todoId,

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { View, StyleSheet, FlatList, Image } from "react-native";
 import { AddTodo } from "../components/AddTodo";
 import { Todo } from "../components/Todo";
@@ -6,8 +6,12 @@ import { TodoContext } from "../context/todo/todoContext";
 import { ScreenContext } from "../context/screen/screenContext";
 
 export const MainScreen = () => {
-  const { addTodo, removeTodo, todos } = useContext(TodoContext);
+  const { addTodo, removeTodo, todos, fetchTodo } = useContext(TodoContext);
   const { setTodoId } = useContext(ScreenContext);
+
+  useEffect(() => {
+    fetchTodo()
+  }, [])
 
   let content = (
     <FlatList
