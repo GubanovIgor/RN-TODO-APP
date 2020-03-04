@@ -4,12 +4,20 @@ import { Alert } from "react-native";
 import { TodoContext } from "./todoContext";
 import { todoReducer } from "./todoReducer";
 import { ScreenContext } from "../screen/screenContext";
-import { ADD_TODO, REMOVE_TODO, UPDATE_TODO, FETCH_TODO } from "../types";
+import {
+  ADD_TODO,
+  REMOVE_TODO,
+  UPDATE_TODO,
+  FETCH_TODO,
+  SHOW_LOADER,
+  HIDE_LOADER
+} from "../types";
 
 export const TodoState = ({ children }) => {
   const { setTodoId } = useContext(ScreenContext);
   const initialState = {
-    todos: []
+    todos: [],
+    loader: false
   };
   const [state, dispatch] = useReducer(todoReducer, initialState);
 
@@ -48,7 +56,8 @@ export const TodoState = ({ children }) => {
     );
   };
   const updateTodo = (id, title) => dispatch({ type: UPDATE_TODO, id, title });
-  const fetchTodo = async () => {
+  const fetchTodos = async () => {
+    showLoader()
     const response = await fetch(
       "https://rn-todo-app-4e853.firebaseio.com/todos.json",
       {
@@ -58,13 +67,25 @@ export const TodoState = ({ children }) => {
       }
     );
     const data = await response.json();
-    const todos = Object.keys(data).map(key => ({...data[key], id: key}))
-    setTimeout(() => dispatch({ type: FETCH_TODO, todos }), 5000)
+    const todos = Object.keys(data).map(key => ({ ...data[key], id: key }));
+    dispatch({ type: FETCH_TODO, todos });
+    hideLoader()
   };
+  const showLoader = () => dispatch({ type: SHOW_LOADER });
+  const hideLoader = () => dispatch({ type: HIDE_LOADER });
 
   return (
     <TodoContext.Provider
-      value={{ todos: state.todos, addTodo, removeTodo, updateTodo, fetchTodo }}
+      value={{
+        todos: state.todos,
+        addTodo,
+        removeTodo,
+        updateTodo,
+        fetchTodos,
+        showLoader,
+        hideLoader,
+        loader: state.loader
+      }}
     >
       {children}
     </TodoContext.Provider>

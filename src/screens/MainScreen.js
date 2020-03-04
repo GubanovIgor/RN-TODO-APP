@@ -1,16 +1,19 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useCallback } from "react";
 import { View, StyleSheet, FlatList, Image } from "react-native";
 import { AddTodo } from "../components/AddTodo";
 import { Todo } from "../components/Todo";
 import { TodoContext } from "../context/todo/todoContext";
 import { ScreenContext } from "../context/screen/screenContext";
+import { AppLoader } from "../components/ui/AppLoader";
 
 export const MainScreen = () => {
-  const { addTodo, removeTodo, todos, fetchTodo } = useContext(TodoContext);
+  const { addTodo, removeTodo, todos, fetchTodos, loader } = useContext(TodoContext);
   const { setTodoId } = useContext(ScreenContext);
 
+  const loadTodos = useCallback(async () => await fetchTodos(), [fetchTodos])
+
   useEffect(() => {
-    fetchTodo()
+    loadTodos()
   }, [])
 
   let content = (
@@ -35,6 +38,12 @@ export const MainScreen = () => {
         />
       </View>
     );
+  }
+
+  if (loader) {
+    return (
+      <AppLoader/>
+    )
   }
 
   return (
