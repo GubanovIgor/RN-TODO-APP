@@ -1,15 +1,9 @@
 import React, { useState } from "react";
-import {AppLogo} from '../components/ui/AppLogo'
+import { AppLogo } from "../components/ui/AppLogo";
 
-import {
-  Modal,
-  View,
-  TextInput,
-  StyleSheet,
-  Alert
-} from "react-native";
+import { Modal, View, TextInput, StyleSheet, Alert } from "react-native";
 import { THEME } from "../theme";
-import {AppButton} from './ui/AppButton'
+import { AppButton } from "./ui/AppButton";
 
 export const EditModal = ({ modalVisible, onCancel, value, onSave, id }) => {
   const [title, setTitle] = useState(value);
@@ -20,6 +14,11 @@ export const EditModal = ({ modalVisible, onCancel, value, onSave, id }) => {
     } else {
       onSave(title, id);
     }
+  };
+
+  const cancelHandler = () => {
+    setTitle(value);
+    onCancel();
   };
 
   return (
@@ -37,13 +36,13 @@ export const EditModal = ({ modalVisible, onCancel, value, onSave, id }) => {
         <View style={styles.buttons}>
           <AppButton
             title="Отменить"
-            onPress={onCancel}
+            onPress={cancelHandler}
             color={THEME.GRAY_COLOR}
           >
-            <AppLogo name='back'/>
+            <AppLogo name="back" />
           </AppButton>
           <AppButton title="Сохранить" onPress={saveHandler}>
-            <AppLogo name='save'/>
+            <AppLogo name="save" />
           </AppButton>
         </View>
       </View>
