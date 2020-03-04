@@ -50,8 +50,14 @@ export const TodoState = ({ children }) => {
         },
         {
           text: "Удалить",
-          onPress: () => {
+          onPress: async () => {
             setTodoId(null);
+            await fetch(`https://rn-todo-app-4e853.firebaseio.com/todos/${id}.json`, {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+            })
             dispatch({ type: REMOVE_TODO, id });
           }
         }
